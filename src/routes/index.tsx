@@ -1,16 +1,24 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import {NavBar} from '../components/ui/nav'
+import {ChatInputBox} from '../components/ui/chatInput'
+import { ChatBubbles } from "~/components/ui/chatBubbles";
+
+
 
 export default component$(() => {
+
+  const selectedModel = "Llama-3.2-1B-Instruct-q4f16_1-MLC"
+  const {res} = useModel()
+
   return (
-    <>
-      <h1>Hi 👋</h1>
-      <div>
-        Can't wait to see what you build with qwik!
-        <br />
-        Happy coding.
-      </div>
-    </>
+    <div class='relative p-0 m-0 w-screen h-screen'>
+    <NavBar></NavBar>
+    <div class='w-full flex justify-center'>
+    <ChatBubbles></ChatBubbles>
+    </div>
+    <ChatInputBox></ChatInputBox>
+    </div>
   );
 });
 

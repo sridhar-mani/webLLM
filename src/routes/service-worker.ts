@@ -8,11 +8,16 @@
  * You can also use this file to add more functionality that runs in the service worker.
  */
 import { setupServiceWorker } from "@builder.io/qwik-city/service-worker";
+import { ServiceWorkerMLCEngineHandler } from "@mlc-ai/web-llm";
 
 setupServiceWorker();
 
 addEventListener("install", () => self.skipWaiting());
 
-addEventListener("activate", () => self.clients.claim());
+addEventListener("activate", () => {
+    self.clients.claim();
 
+    const handler = new ServiceWorkerMLCEngineHandler();
+    console.log("Service Worker activated and MLC Engine initialized!");
+  });
 declare const self: ServiceWorkerGlobalScope;
