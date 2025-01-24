@@ -1,4 +1,4 @@
-export const ChatBubbles = ({userChats,AIresponce})=>{
+export const ChatBubbles = ({userChats=[],AIresponce=[]})=>{
     return (
         <div class='w-4/5'>
         <div class="chat chat-start">
@@ -19,6 +19,15 @@ export const ChatBubbles = ({userChats,AIresponce})=>{
 </div>
 <div class="chat chat-end">
   <div class="chat-bubble">You underestimate my power!</div>
+  {
+    AIresponce && AIresponce.map((u)=>{
+        return(
+            <div class="chat-bubble">
+                {u}
+  </div>
+        )
+    })
+  }
   </div>
 </div>
     )
