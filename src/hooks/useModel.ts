@@ -1,45 +1,31 @@
-import { component$, useStore, useTask$ } from "@builder.io/qwik";
-import { MLCEngineInterface, CreateServiceWorkerMLCEngine, MLCEngineConfig } from "@mlc-ai/web-llm";
+import { 
+  MLCEngineInterface, 
+  CreateServiceWorkerMLCEngine, 
+  MLCEngineConfig, 
+} from "@mlc-ai/web-llm";
+import { models } from "../data/models";
 
-// Custom hook to handle model initialization with service worker
-export const useModel = (selectedModel: string) => {
-  const store = useStore({
-    engineInitialized: false, // To track if engine is initialized
-    progress: 0,
-    engineData: null as any, // Store simple data related to the engine
-  });
+export const useModel = (selectedModelIndex: number): Promise<MLCEngineInterface> => {
+  const selectedModel = models.model_list[selectedModelIndex];
 
-  useTask$(async ({ track }) => {
-    track(() => selectedModel); // Track selectedModel for reactivity
+  const appConfig = {
+    model_list: [selectedModel],
+    useIndexedDBCache: models.useIndexedDBCache,
+  };
 
-    if ("serviceWorker" in navigator) {
-      // Registering the service worker
-      navigator.serviceWorker
-        .register(new URL("service-worker.ts", import.meta.url), {
-          type: "module",
-        })
-        .then(() => {
-          console.log("Service Worker registered successfully");
+  const engineConfig: MLCEngineConfig = {
+    appConfig,
+    initProgressCallback: () => {}
+  };
 
-          // Configuration for the MLC Engine with correct type
-   
+  if ("serviceWorker" in navigator) {
+    return CreateServiceWorkerMLCEngine(
+      selectedModel.model_id,
+      engineConfig,
+      {},
+      1000
+    ) as Promise<MLCEngineInterface>;
+  }
 
-          // Initialize the engine with the provided configuration
-          const newEngine = await CreateServiceWorkerMLCEngine(model);
-
-          // Storing simplified data from the engine that is serializable
-          store.engineData = {
-            modelName: selectedModel,
-            status: 'initialized',
-          };
-
-          store.engineInitialized = true; // Update the initialization status
-        })
-        .catch((error) => {
-          console.error("Error registering service worker: ", error);
-        });
-    }
-  });
-
-  return store;
+  throw new Error("Service worker not supported");
 };
