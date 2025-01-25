@@ -22,4 +22,4 @@ addEventListener("activate", () => {
     
     console.log("Service Worker activated and MLC Engine initialized!");
   });
-declare const self: ServiceWorkerGlobalScope;
+

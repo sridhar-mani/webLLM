@@ -1,0 +1,10 @@
+[[headers]]
+  for = "/qwik-prefetch-service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Content-Type = "application/javascript"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
