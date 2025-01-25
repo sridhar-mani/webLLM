@@ -7,6 +7,7 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
+import { VitePWA } from "vite-plugin-pwa";
 
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
@@ -21,7 +22,19 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
+    plugins: [qwikCity(), qwikVite(), tsconfigPaths(), VitePWA({
+      registerType: 'autoUpdate',
+      srcDir: 'public',strategies:'generateSW',
+      filename: 'service-worker.js',
+      workbox:{
+        maximumFileSizeToCacheInBytes: 5000*1024*1024,
+        navigateFallback: '/index.html',
+        globPatterns: ["**/*.{js,css,html}"],
+      },
+injectManifest:{
+  globPatterns: ["**/*.{js,css,html,png,jpg}"],
+}
+    }),],
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.
@@ -52,6 +65,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "Cache-Control": "public, max-age=0",
       },
     },
+    publicDir:'public',
+
     preview: {
       headers: {
         // Do cache the server response in preview (non-adapter production build)

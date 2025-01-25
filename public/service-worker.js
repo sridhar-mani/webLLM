@@ -18,7 +18,7 @@ addEventListener("activate", () => {
     self.clients.claim();
 
     const handler = new ServiceWorkerMLCEngineHandler();
-    handler.reloadIfUnmatched
+    handler.reloadIfUnmatched();
     
     console.log("Service Worker activated and MLC Engine initialized!");
   });

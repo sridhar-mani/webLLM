@@ -4,8 +4,14 @@ import {
   MLCEngineConfig 
 } from "@mlc-ai/web-llm";
 import { models } from "../data/models";
+import { isBrowser } from "@builder.io/qwik";
 
 export const useModel = (selectedModelIndex: number): Promise<MLCEngineInterface> => {
+  if (!isBrowser) {
+    console.warn("Model loading only in browser");
+    return Promise.reject("Browser environment required");
+  }
+
   const selectedModel = models.model_list[selectedModelIndex];
 
   const appConfig = {
@@ -18,34 +24,15 @@ export const useModel = (selectedModelIndex: number): Promise<MLCEngineInterface
     initProgressCallback: () => {},
   };
 
-  if ("serviceWorker" in navigator) {
-    if (navigator.serviceWorker.controller) {
-
-      return CreateServiceWorkerMLCEngine(
-        selectedModel.model_id,
-        engineConfig,
-        {},
-        1000
-      ) as Promise<MLCEngineInterface>;
-    } else {
-      console.warn("Service Worker controller not found, registering a new one.");
-
-      return navigator.serviceWorker
-        .register(new URL("service-worker.ts", import.meta.url), { type: "module" })
-        .then(() => {
-          return CreateServiceWorkerMLCEngine(
-            selectedModel.model_id,
-            engineConfig,
-            {},
-            1000
-          ) as Promise<MLCEngineInterface>;
-        })
-        .catch((error) => {
-          console.error("Error registering service worker:", error);
-          throw new Error("Failed to register the service worker.");
-        });
-    }
+  if (!window.navigator.serviceWorker) {
+    console.warn("Service Worker not supported");
+    return Promise.reject("Service Worker not available");
   }
 
-  throw new Error("Service Worker not supported or not available in this environment.");
+  return CreateServiceWorkerMLCEngine(
+    selectedModel.model_id,
+    engineConfig,
+    {},
+    1000
+  ) as Promise<MLCEngineInterface>;
 };

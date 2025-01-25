@@ -1,5 +1,5 @@
 [[headers]]
-  for = "/qwik-prefetch-service-worker.js"
+  for = "/service-worker.js"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
     Content-Type = "application/javascript"
@@ -8,3 +8,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[edge_functions]]
+  function = "entry.netlify-edge"
+  path = "/*"

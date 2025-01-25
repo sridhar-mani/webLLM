@@ -14,11 +14,10 @@ declare global {
   interface QwikCityPlatform extends PlatformNetlify {}
 }
 
-// Register service worker (only in browser environment)
 if (typeof window !== "undefined" && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/qwik-prefetch-service-worker.js')
+      .register('/service-worker.js', { type: "module" })
       .then((registration) => {
         console.log('Service Worker registered with scope:', registration.scope);
       })
@@ -27,5 +26,4 @@ if (typeof window !== "undefined" && 'serviceWorker' in navigator) {
       });
   });
 }
-
 export default createQwikCity({ render, qwikCityPlan, manifest });
